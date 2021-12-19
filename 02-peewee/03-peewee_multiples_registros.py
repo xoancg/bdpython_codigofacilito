@@ -75,4 +75,3 @@ if __name__ == '__main__':
     query = User.insert(username='user5', email='user5@correo.com')
     print(type(query))  # Devuelve el tipo de objeto: ModelInsert
     query.execute()  # Este método se puede usar siempre que no necesitamos ningún objeto
-#
