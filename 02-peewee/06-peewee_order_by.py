@@ -43,14 +43,32 @@ if __name__ == '__main__':
 
     # Creamos una lista de diccionarios. Cada diccionario tiene los datos de un usuario
     users = [
-        {'username': 'user1', 'email': 'user1@correo.com '},
-        {'username': 'user2', 'email': 'user2@correo.com '},
-        {'username': 'user3', 'email': 'user3@correo.com '},
-        {'username': 'user4', 'email': 'user4@correo.com '},
-        {'username': 'user5', 'email': 'user5@correo.com '},
+        {'username': 'user1', 'email': 'user1@correo.com', 'active': True},
+        {'username': 'user2', 'email': 'user2@correo.com'},
+        {'username': 'user3', 'email': 'user3@correo.com', 'active': True},
+        {'username': 'user4', 'email': 'user4@correo.com'},
+        {'username': 'user5', 'email': 'user5@correo.com'},
+        {'username': 'user6', 'email': 'user6@correo.com', 'active': True},
+        {'username': 'user7', 'email': 'user7@correo.com', 'active': True},
     ]
 
     # El método que usamos para crear varios registros recibe el listado de usuarios por parámetro
     query = User.insert_many(users)
     query.execute()
-    print('Todo ok')
+
+    # El order_by se ejecuta sobre los datos consultados
+    # users = User.select().where(
+    #     User.active == True
+    # ).order_by(User.username.desc())
+    #
+    # for user in users:
+    #     print(user)
+
+    # Limitar la consulta a la cantidad de 2 registros (sólo devuelve 2 registros como máximo)
+    # Orden por username y descendente
+    users = User.select().where(
+        User.active == True
+    ).order_by(User.username.desc()).limit(2)
+
+    for user in users:
+        print(user)

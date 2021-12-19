@@ -48,9 +48,28 @@ if __name__ == '__main__':
         {'username': 'user3', 'email': 'user3@correo.com '},
         {'username': 'user4', 'email': 'user4@correo.com '},
         {'username': 'user5', 'email': 'user5@correo.com '},
+        {'username': 'user6', 'email': 'user6@correo.com '},
+        {'username': 'user7', 'email': 'user7@correo.com '},
     ]
 
     # El método que usamos para crear varios registros recibe el listado de usuarios por parámetro
     query = User.insert_many(users)
     query.execute()
-    print('Todo ok')
+
+    # Método de clase para realizar una consulta - SELECT * FROM users;
+    # Retorna un objeto ModelSelect, el cual almacenaremos en la variable users Y SE PUEDE ITERAR
+    users = User.select()
+    print(users)
+
+    for user in users:
+        print(user.username, user.email, user.created_at)
+
+    # Método de clase para realizar una consulta - SELECT username, email FROM users;
+    # No podremos imprimir un campo que no hubiéramos incluido en el SELECT
+    users = User.select(User.username, User.email)
+    print(users)
+
+    for user in users:
+        print(user.username, user.email)
+
+    # Cláu
