@@ -60,7 +60,8 @@ if __name__ == '__main__':
         'email': 'user3@dominio.com'
     }
 
-    # Doble asterisco para indicarle a Python que el contenido de las llaves (values) serán los parámetros
+    # Doble asterisco para indicarle a Python que el contenido de las llaves (values) será un número indefinido de
+    # parámetros, todos con su nombre (cuando solo hay un asterisco, la asignación de parámetros es opcional).
     user3 = User(**values)
     user3.save()
 
