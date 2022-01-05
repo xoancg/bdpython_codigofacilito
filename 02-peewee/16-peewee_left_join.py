@@ -40,7 +40,7 @@ class Category(peewee.Model):
         db_table = 'categories'
 
     def __str__(self):
-        return self.title
+        return 'Título: ' + self.title
 
 
 class ProductCategory(peewee.Model):
@@ -70,15 +70,32 @@ if __name__ == '__main__':
 
     ProductCategory.create(product=tv, category=home)
 
-    # Mostrar en consola todos los productos con sus correspondientes categorias - Problema N+1 Query
-    # backref='categories' en ProductCategory.product para acceder a la relación entre un producto y ProductCategory
-    # Una forma de hacerlo (no es la mejor, ya que surge el problema de N+1 Query; perdemos el control del nº consultas)
+    # Productos sin categoría
+    Product.create(title='Product1', price=600.00)
+    Product.create(title='Product2', price=600.00)
+    Product.create(title='Product3', price=600.00)
 
-    # Primera consulta: iteramos sobre todos los registros de la tabla Product
-    for product in Product.select():
-        # Segunda consulta de todos los registros de la tabla products (una por cada product_category)
-        for product_category in product.categories:
-            print(product, '-', product_category.category)
+    # Listar en consola todos los productos que no posean una categoría
+    # Left Join
 
-    # Para solucionar el problema de N+1 Query, utilizaremos los Joins (ver siguiente archivo)
+    products = Product.select(
+        Product.title
+    ).join(
+        ProductCategory,  # Primer argumento: modelo a partir del cual queremos hacer el join
+        peewee.JOIN.LEFT_OUTER  # 2º arg.: Especificamos el tipo de join: LEFT JOIN (por defecto, siempre es INNER JOIN)
+    ).where(
+        ProductCategory.id == None  # No vale: ProductCategory.id is None
+    )
 
+    # Imprimimos la consulta
+    print(products)
+    # Output: SELECT `t1`.`title` FROM `products` AS `t1` LEFT OUTER JOIN `product_categories` AS `t2` ON (
+    # `t2`.`product_id` = `t1`.`id`) WHERE (`t2`.`id` IS NULL)
+
+    for product in products:
+        print(product.title)
+
+    # Output:
+    # Product1
+    # Product2
+    # Product3

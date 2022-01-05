@@ -40,7 +40,7 @@ class Category(peewee.Model):
         db_table = 'categories'
 
     def __str__(self):
-        return self.title
+        return 'Título: ' + self.title
 
 
 class ProductCategory(peewee.Model):
@@ -75,10 +75,24 @@ if __name__ == '__main__':
     # Una forma de hacerlo (no es la mejor, ya que surge el problema de N+1 Query; perdemos el control del nº consultas)
 
     # Primera consulta: iteramos sobre todos los registros de la tabla Product
+    print('\nConsulta generando el problema N+1 Query (demasiadas consultas para bases de datos grandes):')
     for product in Product.select():
         # Segunda consulta de todos los registros de la tabla products (una por cada product_category)
         for product_category in product.categories:
             print(product, '-', product_category.category)
 
-    # Para solucionar el problema de N+1 Query, utilizaremos los Joins (ver siguiente archivo)
+    print('\nUna única consulta utilizando joins:')
 
+    # Para solucionar el problema de N+1 Query, utilizaremos los Joins
+    for product in Product.select(
+            Product.title, Category.title
+    ).join(
+        ProductCategory  # Modelo a partir del cual queremos hacer la unión
+    ).join(Category,
+           on=(  # Segundo join: ProductCategory con Category
+                   ProductCategory.category_id == Category.id  # Condiciones de consulta
+            )
+           ):
+        # product.<primer join>.<segundo join> en minúsculas!
+        # category.title llama al método __str__ de la clase Category - ¡Esto no funciona aquí! (¿Por qué?)
+        print(product, '-', product.productcategory.category.title)
